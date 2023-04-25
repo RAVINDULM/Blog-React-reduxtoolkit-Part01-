@@ -1,46 +1,48 @@
-import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { addTodo, removeTodo } from "./StateMGT/todoSlice";
+import { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { fetchTodos, toggleTodo, deleteTodo } from "./StateMGT/todoSlice";
 
 function TodoList() {
-  const [inputValue, setInputValue] = useState("");
   const dispatch = useDispatch();
-  const todos = useSelector((state) => state.todo);
+  const todos = useSelector((state) => state.todo.items);
+  const status = useSelector((state) => state.todo.status);
 
-  const handleInputChange = (event) => {
-    setInputValue(event.target.value);
+  useEffect(() => {
+    if (status === "idle") {
+      dispatch(fetchTodos());
+    }
+  }, [dispatch, status]);
+
+  const handleToggleTodo = (id) => {
+    dispatch(toggleTodo(id));
   };
 
-  const handleAddTodo = () => {
-    dispatch(
-      addTodo({
-        id: Date.now(),
-        text: inputValue,
-      })
-    );
-    setInputValue("");
-  };
-
-  const handleRemoveTodo = (todo) => {
-    dispatch(
-      removeTodo({
-        id: todo.id,
-      })
-    );
+  const handleDeleteTodo = (id) => {
+    dispatch(deleteTodo(id));
   };
 
   return (
     <div>
-      <input type="text" value={inputValue} onChange={handleInputChange} />
-      <button onClick={handleAddTodo}>Add Todo</button>
-      <ul>
-        {todos.map((todo) => (
-          <li key={todo.id}>
-            {todo.text}
-            <button onClick={() => handleRemoveTodo(todo)}>Remove</button>
-          </li>
+      {status === "loading" && <div>Loading...</div>}
+      {status === "failed" && <div>Error fetching todos</div>}
+      {status === "succeeded" &&
+        todos.map((todo) => (
+          <div key={todo.id}>
+            <input
+              type="checkbox"
+              checked={todo.completed}
+              onChange={() => handleToggleTodo(todo.id)}
+            />
+            <span
+              style={{
+                textDecoration: todo.completed ? "line-through" : "none",
+              }}
+            >
+              {todo.text}
+            </span>
+            <button onClick={() => handleDeleteTodo(todo.id)}>Delete</button>
+          </div>
         ))}
-      </ul>
     </div>
   );
 }
