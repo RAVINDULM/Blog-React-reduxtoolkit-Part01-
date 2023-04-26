@@ -1,14 +1,35 @@
-import Todo from "./Todo";
-import AddTodo from "./AddTodo";
+import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import { addTodo } from "./StateMGT/todoSlice";
 
-function App() {
+function AddTodo() {
+  const dispatch = useDispatch();
+  const [text, setText] = useState("");
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    console.log("add todo", text);
+    if (text) {
+      const newTodo = {
+        text: text,
+        completed: false,
+      };
+      console.log("add todo", newTodo);
+      dispatch(addTodo(newTodo));
+      setText("");
+    }
+  };
+
   return (
-    <div>
-      {/* <h1>Hi</h1> */}
-      <AddTodo />
-      <Todo />
-    </div>
+    <form onSubmit={handleSubmit}>
+      <input
+        type="text"
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+      />
+      <button type="submit">Add Todo</button>
+    </form>
   );
 }
 
-export default App;
+export default AddTodo;

@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchTodos, toggleTodo, deleteTodo } from "./StateMGT/todoSlice";
 
-function Todo() {
+function TodoList() {
   const dispatch = useDispatch();
   const todos = useSelector((state) => state.todo.items);
   const status = useSelector((state) => state.todo.status);
@@ -47,4 +47,4 @@ function Todo() {
   );
 }
 
-export default Todo;
+export default TodoList;
