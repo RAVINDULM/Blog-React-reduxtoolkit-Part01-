@@ -27,4 +27,14 @@ jobs:
           cache: "npm"
       - run: npm ci
       - run: npm run build --if-present
-    # - run: npm test
+
+      - name: Build & push Docker image
+        uses: mr-smithers-excellent/docker-build-push@v6
+        with:
+          image: ravindulm/github-actions-todo-app
+          tags: latest
+          registry: docker.io
+          dockerfile: Dockerfile
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+        # - run: npm test
